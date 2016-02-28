@@ -22,6 +22,12 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     [SerializeField]
     private Text m_letterLabel;
 
+    [SerializeField]
+    private LagPosition m_lagPosition;
+
+    [SerializeField]
+    private LagRotation m_lagRotation;
+
     /// <summary>
     /// The letter of the tile.
     /// </summary>
@@ -30,7 +36,7 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     /// <summary>
     /// Cached transform.
     /// </summary>
-    private Transform m_transform;
+    private RectTransform m_transform;
 
     /// <summary>
     /// Cached parent.
@@ -47,9 +53,20 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     /// </summary>
     private void Start()
     {
-        m_transform = this.transform;
+        m_transform = this.GetComponent<RectTransform>();
         m_parent = m_transform.parent;
         m_canvasGroup = m_parent.GetComponent<CanvasGroup>();
+
+        if (m_lagPosition != null)
+        {
+            m_lagPosition.SetOffset(new Vector3(0f, -(m_transform.rect.height / 1.75f), 0f));
+            m_lagPosition.enabled = false;
+        }
+
+        if (m_lagRotation != null)
+        {
+            m_lagRotation.enabled = false;
+        }
     }
 
     /// <summary>
@@ -79,6 +96,18 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         m_canvasGroup.blocksRaycasts = true;
         m_transform.localScale = DRAGGED_SCALE;
+
+        if (m_lagPosition != null)
+        {
+            m_lagPosition.Reset();
+            m_lagPosition.enabled = true;
+        }
+
+        if (m_lagRotation != null)
+        {
+            m_lagRotation.Reset();
+            m_lagRotation.enabled = true;
+        }
     }
 
     /// <summary>
@@ -99,5 +128,15 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_canvasGroup.blocksRaycasts = true;
         m_transform.localScale = REGULAR_SCALE;
         m_transform.rotation = Quaternion.identity;
+
+        if (m_lagPosition != null)
+        {
+            m_lagPosition.enabled = false;
+        }
+
+        if (m_lagRotation != null)
+        {
+            m_lagRotation.enabled = false;
+        }
     }
 }

@@ -17,19 +17,45 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private static readonly Vector3 DRAGGED_SCALE = new Vector3(1.25f, 1.25f, 1f);
 
     /// <summary>
+    /// Path to the tile picked up sound.
+    /// </summary>
+    private static readonly string ON_TILE_PICKED_UP_SOUND_PATH = "Sounds/click0";
+
+    /// <summary>
+    /// Audio clip to play when we pick up the tile.
+    /// </summary>
+    private static AudioClip ON_TILE_PICKED_UP_SOUND;
+
+    /// <summary>
+    /// Path to the tile dropped sound.
+    /// </summary>
+    private static readonly string ON_TILE_DROPPED_SOUND_PATH = "Sounds/click1";
+
+    /// <summary>
+    /// Audio clip to play when the tile is dropped.
+    /// </summary>
+    private static AudioClip ON_TILE_DROPPED_SOUND;
+
+    /// <summary>
     /// The UI label used to display the letter for this tile.
     /// </summary>
     [SerializeField]
     private Text m_letterLabel;
 
+    /// <summary>
+    /// Script use to add a "lag" to the tile movement.
+    /// </summary>
     [SerializeField]
     private LagPosition m_lagPosition;
 
+    /// <summary>
+    /// Script used to add a swaying effect to the tile movement.
+    /// </summary>
     [SerializeField]
     private LagRotation m_lagRotation;
 
     /// <summary>
-    /// The letter of the tile.
+    /// The letter of the tile. A-Z.
     /// </summary>
     private char m_letter;
 
@@ -53,16 +79,25 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     /// </summary>
     private void Start()
     {
+        //If sounds have not been loaded in, do it first.
+        if (ON_TILE_PICKED_UP_SOUND == null)
+        {
+            ON_TILE_PICKED_UP_SOUND = Resources.Load<AudioClip>(ON_TILE_PICKED_UP_SOUND_PATH);
+            ON_TILE_DROPPED_SOUND = Resources.Load<AudioClip>(ON_TILE_DROPPED_SOUND_PATH);
+        }
+
         m_transform = this.GetComponent<RectTransform>();
         m_parent = m_transform.parent;
         m_canvasGroup = m_parent.GetComponent<CanvasGroup>();
 
+        //If the drag script exists, initialize it.
         if (m_lagPosition != null)
         {
             m_lagPosition.SetOffset(new Vector3(0f, -(m_transform.rect.height / 1.75f), 0f));
             m_lagPosition.enabled = false;
         }
 
+        //Rotation script should be off
         if (m_lagRotation != null)
         {
             m_lagRotation.enabled = false;
@@ -94,7 +129,7 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     /// <param name="eventData">The drag event information.</param>
     public void OnBeginDrag(PointerEventData eventData)
     {
-        m_canvasGroup.blocksRaycasts = true;
+        m_canvasGroup.blocksRaycasts = false;
         m_transform.localScale = DRAGGED_SCALE;
 
         if (m_lagPosition != null)
@@ -108,6 +143,9 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             m_lagRotation.Reset();
             m_lagRotation.enabled = true;
         }
+
+        //Play the pickup sound
+        AudioManager.Instance.PlaySound(ON_TILE_PICKED_UP_SOUND);
     }
 
     /// <summary>
@@ -138,5 +176,8 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             m_lagRotation.enabled = false;
         }
+
+        //Play the drop sound
+        AudioManager.Instance.PlaySound(ON_TILE_DROPPED_SOUND);
     }
 }

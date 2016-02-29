@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     /// <summary>
     /// Scale of the tile -before- it is dragged.
@@ -15,27 +15,7 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     /// Scale of the tile -while- it is being dragged. Makes it easier to see what you are moving.
     /// </summary>
     private static readonly Vector3 DRAGGED_SCALE = new Vector3(1.25f, 1.25f, 1f);
-
-    /// <summary>
-    /// Path to the tile picked up sound.
-    /// </summary>
-    private static readonly string ON_TILE_PICKED_UP_SOUND_PATH = "Sounds/click0";
-
-    /// <summary>
-    /// Audio clip to play when we pick up the tile.
-    /// </summary>
-    private static AudioClip ON_TILE_PICKED_UP_SOUND;
-
-    /// <summary>
-    /// Path to the tile dropped sound.
-    /// </summary>
-    private static readonly string ON_TILE_DROPPED_SOUND_PATH = "Sounds/click1";
-
-    /// <summary>
-    /// Audio clip to play when the tile is dropped.
-    /// </summary>
-    private static AudioClip ON_TILE_DROPPED_SOUND;
-
+    
     /// <summary>
     /// The UI label used to display the letter for this tile.
     /// </summary>
@@ -79,13 +59,6 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     /// </summary>
     private void Start()
     {
-        //If sounds have not been loaded in, do it first.
-        if (ON_TILE_PICKED_UP_SOUND == null)
-        {
-            ON_TILE_PICKED_UP_SOUND = Resources.Load<AudioClip>(ON_TILE_PICKED_UP_SOUND_PATH);
-            ON_TILE_DROPPED_SOUND = Resources.Load<AudioClip>(ON_TILE_DROPPED_SOUND_PATH);
-        }
-
         m_transform = this.GetComponent<RectTransform>();
         m_parent = m_transform.parent;
         m_canvasGroup = m_parent.GetComponent<CanvasGroup>();
@@ -143,9 +116,6 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             m_lagRotation.Reset();
             m_lagRotation.enabled = true;
         }
-
-        //Play the pickup sound
-        AudioManager.Instance.PlaySound(ON_TILE_PICKED_UP_SOUND);
     }
 
     /// <summary>
@@ -176,8 +146,5 @@ public sealed class WordTile : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             m_lagRotation.enabled = false;
         }
-
-        //Play the drop sound
-        AudioManager.Instance.PlaySound(ON_TILE_DROPPED_SOUND);
     }
 }

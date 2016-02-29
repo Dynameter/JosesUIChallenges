@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 /// <summary>
 /// A monobehaviour wrapper for the state machine.
 /// </summary>
-public class UnityStateMachine : MonoBehaviour
+public sealed class WordTileStateMachine : MonoBehaviour
 {
     /// <summary>
     /// The state machine instance.
@@ -20,6 +19,14 @@ public class UnityStateMachine : MonoBehaviour
         {
             return this._stateMachine;
         }
+    }
+
+    /// <summary>
+    /// Sets the starting state
+    /// </summary>
+    public void Start()
+    {
+
     }
 
     /// <summary>

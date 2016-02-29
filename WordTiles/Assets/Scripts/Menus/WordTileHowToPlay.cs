@@ -19,6 +19,6 @@ public sealed class WordTileHowToPlay : MonoBehaviour
         GameObject.Destroy(this.gameObject);
 
         //Transition to another state
-        
+        WordTileStateMachine.Instance.SM.SetCurrentStateTo<WordTileState_StartGame>();
     }
 }

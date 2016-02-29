@@ -47,7 +47,7 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     /// <summary>
     /// Cached parent.
     /// </summary>
-    private Transform m_parent;
+    private RectTransform m_parent;
 
     /// <summary>
     /// Canvas group that this graphic belongs to. We need to enable and disable it to we can send drop events.
@@ -57,15 +57,18 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     /// <summary>
     /// Caches all of the components on startup.
     /// </summary>
-    private void Start()
+    protected override void Awake()
     {
+        base.Start();
+
         m_transform = this.GetComponent<RectTransform>();
-        m_parent = m_transform.parent;
+        m_parent = m_transform.parent.GetComponent<RectTransform>();
         m_canvasGroup = m_parent.GetComponent<CanvasGroup>();
 
         //If the drag script exists, initialize it.
         if (m_lagPosition != null)
         {
+            m_lagPosition.Init();
             m_lagPosition.SetOffset(new Vector3(0f, -(m_transform.rect.height / 1.75f), 0f));
             m_lagPosition.enabled = false;
         }
@@ -73,6 +76,7 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
         //Rotation script should be off
         if (m_lagRotation != null)
         {
+            m_lagRotation.Init();
             m_lagRotation.enabled = false;
         }
     }
@@ -102,19 +106,22 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     /// <param name="eventData">The drag event information.</param>
     public void OnBeginDrag(PointerEventData eventData)
     {
-        m_canvasGroup.blocksRaycasts = false;
-        m_transform.localScale = DRAGGED_SCALE;
-
-        if (m_lagPosition != null)
+        if (IsInteractable() == true)
         {
-            m_lagPosition.Reset();
-            m_lagPosition.enabled = true;
-        }
+            m_canvasGroup.blocksRaycasts = false;
+            m_transform.localScale = DRAGGED_SCALE;
 
-        if (m_lagRotation != null)
-        {
-            m_lagRotation.Reset();
-            m_lagRotation.enabled = true;
+            if (m_lagPosition != null)
+            {
+                m_lagPosition.Reset();
+                m_lagPosition.enabled = true;
+            }
+
+            if (m_lagRotation != null)
+            {
+                m_lagRotation.Reset();
+                m_lagRotation.enabled = true;
+            }
         }
     }
 
@@ -124,7 +131,10 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     /// <param name="eventData">The drag event information.</param>
     public void OnDrag(PointerEventData eventData)
     {
-        m_parent.position = eventData.position;
+        if (IsInteractable() == true)
+        {
+            m_parent.position = eventData.position;
+        }
     }
 
     /// <summary>
@@ -133,18 +143,39 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     /// <param name="eventData">The drag event information.</param>
     public void OnEndDrag(PointerEventData eventData)
     {
-        m_canvasGroup.blocksRaycasts = true;
-        m_transform.localScale = REGULAR_SCALE;
-        m_transform.rotation = Quaternion.identity;
-
-        if (m_lagPosition != null)
+        if (IsInteractable() == true)
         {
-            m_lagPosition.enabled = false;
-        }
+            m_canvasGroup.blocksRaycasts = true;
+            m_transform.localScale = REGULAR_SCALE;
+            m_transform.rotation = Quaternion.identity;
+            m_transform.localPosition = Vector3.one;
 
-        if (m_lagRotation != null)
-        {
-            m_lagRotation.enabled = false;
+            if (m_lagPosition != null)
+            {
+                m_lagPosition.enabled = false;
+            }
+
+            if (m_lagRotation != null)
+            {
+                m_lagRotation.enabled = false;
+            }
+
+            //Check to see if we are attached to a slot. If not, return to the tray.
+            WordTileTray tray = WordTileStateMachine.Instance.MainMenuScreen.GetWordTileTray();
+            if (m_parent.parent == tray.transform)
+            {
+                tray.ReturnTile(this);
+            }
         }
+    }
+
+    public RectTransform GetRectTransform()
+    {
+        return m_transform;
+    }
+
+    public RectTransform GetParent()
+    {
+        return m_parent;
     }
 }

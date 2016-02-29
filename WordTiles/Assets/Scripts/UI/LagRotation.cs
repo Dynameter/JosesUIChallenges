@@ -29,11 +29,9 @@ public class LagRotation : MonoBehaviour, ILaggable
     /// <summary>
     /// Caches transform so we can reuse it.
     /// </summary>
-    private void Awake()
+    public void Init()
     {
         m_transform = this.transform;
-
-        Reset();
     }
 
     /// <summary>

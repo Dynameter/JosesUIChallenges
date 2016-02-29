@@ -44,13 +44,11 @@ public class LagPosition : MonoBehaviour, ILaggable
     /// <summary>
     /// Caches transform values.
     /// </summary>
-    public void Awake()
+    public void Init()
     {
         m_transform = this.transform;
         m_parent = m_transform.parent;
         m_origPos = m_transform.localPosition;
-
-        Reset();
     }
 
     /// <summary>

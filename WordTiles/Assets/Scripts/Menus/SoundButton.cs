@@ -60,12 +60,20 @@ public class SoundButton : Button
     public override void OnPointerDown(PointerEventData eventData)
     {
         base.OnPointerDown(eventData);
-        AudioManager.Instance.PlaySound(CLICK_ONE_SOUND);
+
+        if (IsInteractable() == true)
+        {
+            AudioManager.Instance.PlaySound(CLICK_ONE_SOUND);
+        }
     }
 
     public override void OnPointerUp(PointerEventData eventData)
     {
         base.OnPointerUp(eventData);
-        AudioManager.Instance.PlaySound(CLICK_TWO);
+
+        if (IsInteractable() == true)
+        {
+            AudioManager.Instance.PlaySound(CLICK_TWO);
+        }
     }
 }

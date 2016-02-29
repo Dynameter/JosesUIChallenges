@@ -14,4 +14,12 @@ public sealed class WordTilesMainMenu : MonoBehaviour
 
     [SerializeField]
     private GameObject m_submitButton;
+
+    [SerializeField]
+    private WordTileTray m_wordTray;
+
+    public WordTileTray GetWordTileTray()
+    {
+        return m_wordTray;
+    }
 }

@@ -44,7 +44,7 @@ public class LagPosition : MonoBehaviour, ILaggable
     /// <summary>
     /// Caches transform values.
     /// </summary>
-    public void Start()
+    public void Awake()
     {
         m_transform = this.transform;
         m_parent = m_transform.parent;

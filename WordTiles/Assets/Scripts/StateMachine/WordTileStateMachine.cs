@@ -5,10 +5,20 @@
 /// </summary>
 public sealed class WordTileStateMachine : MonoBehaviour
 {
+    private static WordTileStateMachine _instance;
+
+    public static WordTileStateMachine Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+
     /// <summary>
     /// The state machine instance.
     /// </summary>
-    private StateMachine _stateMachine = new StateMachine();
+    private StateMachine m_stateMachine = new StateMachine();
 
     /// <summary>
     /// The state machine instance.
@@ -17,7 +27,22 @@ public sealed class WordTileStateMachine : MonoBehaviour
     {
         get
         {
-            return this._stateMachine;
+            return m_stateMachine;
+        }
+    }
+
+    private WordTilesMainMenu m_mainMenu;
+    public WordTilesMainMenu MainMenuScreen
+    {
+        get
+        {
+            return m_mainMenu;
+        }
+
+        set
+        {
+            m_mainMenu = value;
+            m_mainMenu.GetComponent<RectTransform>().SetParent(this.transform, false);
         }
     }
 
@@ -26,7 +51,8 @@ public sealed class WordTileStateMachine : MonoBehaviour
     /// </summary>
     public void Start()
     {
-
+        _instance = this;
+        m_stateMachine.SetCurrentStateTo<WordTileState_Init>();
     }
 
     /// <summary>
@@ -34,6 +60,6 @@ public sealed class WordTileStateMachine : MonoBehaviour
     /// </summary>
     public void Update()
     {
-        _stateMachine.UpdateState();
+        m_stateMachine.UpdateState();
     }
 }

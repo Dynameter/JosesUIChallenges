@@ -29,7 +29,7 @@ public class LagRotation : MonoBehaviour, ILaggable
     /// <summary>
     /// Caches transform so we can reuse it.
     /// </summary>
-    private void Start()
+    private void Awake()
     {
         m_transform = this.transform;
 

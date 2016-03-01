@@ -8,8 +8,12 @@ public class LagPosition : MonoBehaviour, ILaggable
     /// </summary>
     private const float DEFAULT_SPEED = 10f;
 
+    /// <summary>
+    /// Speed at which the object catches up to the parent position
+    /// </summary>
+    [SerializeField]
     [Tooltip("Speed at which the object catches up to the parent position")]
-    public float movementSpeed = DEFAULT_SPEED;
+    private float m_movementSpeed = DEFAULT_SPEED;
 
     /// <summary>
     /// Cached transform.
@@ -86,7 +90,7 @@ public class LagPosition : MonoBehaviour, ILaggable
     {
         //Update the position
         Vector3 targPos = (m_parent.position + m_parent.rotation * m_relPosition);
-        m_absPosition = Vector3.Lerp(m_absPosition, targPos, Mathf.Clamp01(argDelta * movementSpeed));
+        m_absPosition = Vector3.Lerp(m_absPosition, targPos, Mathf.Clamp01(argDelta * m_movementSpeed));
         m_transform.position = m_absPosition;
     }
 }

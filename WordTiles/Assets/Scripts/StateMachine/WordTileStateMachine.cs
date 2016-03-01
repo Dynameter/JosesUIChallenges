@@ -5,8 +5,14 @@
 /// </summary>
 public sealed class WordTileStateMachine : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance of the state machine.
+    /// </summary>
     private static WordTileStateMachine _instance;
 
+    /// <summary>
+    /// Singleton instance of the state machine.
+    /// </summary>
     public static WordTileStateMachine Instance
     {
         get
@@ -28,21 +34,6 @@ public sealed class WordTileStateMachine : MonoBehaviour
         get
         {
             return m_stateMachine;
-        }
-    }
-
-    private WordTilesMainMenu m_mainMenu;
-    public WordTilesMainMenu MainMenuScreen
-    {
-        get
-        {
-            return m_mainMenu;
-        }
-
-        set
-        {
-            m_mainMenu = value;
-            m_mainMenu.GetComponent<RectTransform>().SetParent(this.transform, false);
         }
     }
 

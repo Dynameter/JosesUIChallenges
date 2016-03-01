@@ -8,8 +8,12 @@ public class LagRotation : MonoBehaviour, ILaggable
     /// </summary>
     private const float DEFAULT_DEGREES = 1f;
 
+    /// <summary>
+    /// The min and max angle the tile can swing back and forth to.
+    /// </summary>
+    [SerializeField]
     [Tooltip("The min and max angle the tile can swing back and forth to")]
-    public float swaySpeed = DEFAULT_DEGREES;
+    private float m_swaySpeed = DEFAULT_DEGREES;
 
     /// <summary>
     /// Cached transform.
@@ -62,7 +66,7 @@ public class LagRotation : MonoBehaviour, ILaggable
         m_lastPos = m_transform.position;
 
         //Calculate the angle using a spring lerp
-        m_swayAngle += (deltaPos.x * swaySpeed);
+        m_swayAngle += (deltaPos.x * m_swaySpeed);
         m_swayAngle = LerpWithSpring(m_swayAngle, 0f, 20f, Time.deltaTime);
         m_transform.localRotation = Quaternion.Euler(0f, 0f, -m_swayAngle);
     }

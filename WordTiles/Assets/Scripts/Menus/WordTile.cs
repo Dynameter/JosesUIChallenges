@@ -7,6 +7,12 @@ using UnityEngine.EventSystems;
 public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     /// <summary>
+    /// Function signature for a tile detached callback.
+    /// </summary>
+    /// <param name="argDetachedTile">The tile that detached.</param>
+    public delegate void OnWordTileDetached(WordTile argDetachedTile);
+
+    /// <summary>
     /// Scale of the tile -before- it is dragged.
     /// </summary>
     private static readonly Vector3 REGULAR_SCALE = Vector3.one;
@@ -20,18 +26,21 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     /// The UI label used to display the letter for this tile.
     /// </summary>
     [SerializeField]
+    [Tooltip("The label used to display the tile letter")]
     private Text m_letterLabel;
 
     /// <summary>
     /// Script use to add a "lag" to the tile movement.
     /// </summary>
     [SerializeField]
+    [Tooltip("Script used to add a lag to the tile movement")]
     private LagPosition m_lagPosition;
 
     /// <summary>
     /// Script used to add a swaying effect to the tile movement.
     /// </summary>
     [SerializeField]
+    [Tooltip("Script used to add lag to the tile rotation")]
     private LagRotation m_lagRotation;
 
     /// <summary>
@@ -53,6 +62,11 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     /// Canvas group that this graphic belongs to. We need to enable and disable it to we can send drop events.
     /// </summary>
     private CanvasGroup m_canvasGroup;
+
+    /// <summary>
+    /// Callback called when the tile is detached.
+    /// </summary>
+    private OnWordTileDetached m_onDetached;
 
     /// <summary>
     /// Caches all of the components on startup.
@@ -108,6 +122,11 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     {
         if (IsInteractable() == true)
         {
+            //Set the parent to the tray so we can return it if not dropped on a slot.
+            WordTileTray tray = WordTilesGameManager.Instance.MainMenuScreen.GetWordTileTray();
+            SetGrandParent(tray.transform);
+
+            //Prevent the tile from blocking raycasts so the slot can receive the drop event.
             m_canvasGroup.blocksRaycasts = false;
             m_transform.localScale = DRAGGED_SCALE;
 
@@ -121,6 +140,12 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
             {
                 m_lagRotation.Reset();
                 m_lagRotation.enabled = true;
+            }
+
+            //Call the detach callback
+            if (m_onDetached != null)
+            {
+                m_onDetached(this);
             }
         }
     }
@@ -161,7 +186,7 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
             }
 
             //Check to see if we are attached to a slot. If not, return to the tray.
-            WordTileTray tray = WordTileStateMachine.Instance.MainMenuScreen.GetWordTileTray();
+            WordTileTray tray = WordTilesGameManager.Instance.MainMenuScreen.GetWordTileTray();
             if (m_parent.parent == tray.transform)
             {
                 tray.ReturnTile(this);
@@ -169,13 +194,45 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
         }
     }
 
+    /// <summary>
+    /// Gets the UI rect transform.
+    /// </summary>
+    /// <returns>The UI rect transform.</returns>
     public RectTransform GetRectTransform()
     {
         return m_transform;
     }
 
+    /// <summary>
+    /// Gets the parent UI rect transform.
+    /// </summary>
+    /// <returns>Returns the parent UI rect transform.</returns>
     public RectTransform GetParent()
     {
         return m_parent;
+    }
+
+    /// <summary>
+    /// Sets the grandparent of the tile.
+    /// </summary>
+    /// <param name="argGrandParent">The grandparent to set.</param>
+    public void SetGrandParent(Transform argGrandParent)
+    {
+        m_parent.SetParent(argGrandParent);
+
+        if (m_onDetached != null)
+        {
+            m_onDetached(this);
+            m_onDetached = null;
+        }
+    }
+
+    /// <summary>
+    /// Sets the callback to call when the tile is detached.
+    /// </summary>
+    /// <param name="argOnDetach">The callback to call when the tile is detached</param>
+    public void SetOnDetachedCallback(OnWordTileDetached argOnDetach)
+    {
+        m_onDetached = argOnDetach;
     }
 }

@@ -81,13 +81,17 @@ public class WordTileTray : MonoBehaviour
     {
         for (int i = 0; i < m_wordTiles.Count; ++i)
         {
+            //Set back to the initial values
             m_wordTiles[i].gameObject.SetActive(false);
             m_wordTiles[i].interactable = false;
 
-            m_wordTiles[i].SetGrandParent(this.transform);
+            m_wordTiles[i].SetGrandParent(this.transform, i);
             m_wordTiles[i].GetParent().localPosition = m_wordTilesStartingPos[i];
 
             m_wordTiles[i].SetOnDetachedCallback(null);
+
+            //Stop any movement coroutines
+            m_wordTiles[i].StopAllCoroutines();
         }
     }
 
@@ -175,7 +179,7 @@ public class WordTileTray : MonoBehaviour
     /// <param name="argTileToReturn">The tile to return to the tray.</param>
     public void ReturnTile(WordTile argTileToReturn)
     {
-        StartCoroutine(ReturnTileCo(argTileToReturn));
+        argTileToReturn.StartCoroutine(ReturnTileCo(argTileToReturn));
     }
 
     /// <summary>
@@ -190,10 +194,11 @@ public class WordTileTray : MonoBehaviour
         argTileToReturn.SetOnDetachedCallback(null);
 
         //Set parent to the tray
-        argTileToReturn.SetGrandParent(this.transform);
+        int tileIndex = m_wordTiles.IndexOf(argTileToReturn);
+        argTileToReturn.SetGrandParent(this.transform, tileIndex);
 
         RectTransform tileParentTransform = argTileToReturn.GetParent();
-        Vector3 originalPos = m_wordTilesStartingPos[m_wordTiles.IndexOf(argTileToReturn)];
+        Vector3 originalPos = m_wordTilesStartingPos[tileIndex];
         while (Vector3.Distance(tileParentTransform.localPosition, originalPos) > 0.05f)
         {
             tileParentTransform.localPosition = Vector3.MoveTowards(tileParentTransform.localPosition, originalPos, (Time.deltaTime * RETURN_TILE_SPEED));

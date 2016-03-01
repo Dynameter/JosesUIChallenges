@@ -44,6 +44,23 @@ public sealed class WordTileSlotGroup : MonoBehaviour
     }
 
     /// <summary>
+    /// Checks to see if all of the slots are empty.
+    /// </summary>
+    /// <returns>Returns true is all of the slots are empty.</returns>
+    public bool AreSlotsEmpty()
+    {
+        for (int i = 0; i < m_slots.Length; ++i)
+        {
+            if (m_slots[i].GetAttachedWordTile() != null)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
     /// Constructs the word formed from the tiles.
     /// </summary>
     /// <returns>Returns the string formed by the tile characters.</returns>

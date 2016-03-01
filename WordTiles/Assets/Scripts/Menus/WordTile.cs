@@ -216,9 +216,21 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     /// Sets the grandparent of the tile.
     /// </summary>
     /// <param name="argGrandParent">The grandparent to set.</param>
-    public void SetGrandParent(Transform argGrandParent)
+    /// <param name="argIndex">The sibling index</param>
+    public void SetGrandParent(Transform argGrandParent, int argIndex = -1)
     {
+        //Attach to the new parent.
         m_parent.SetParent(argGrandParent);
+
+        //Set the right sibling index.
+        if (argIndex == -1)
+        {
+            m_parent.SetAsLastSibling();
+        }
+        else
+        {
+            m_parent.SetSiblingIndex(argIndex);
+        }
 
         if (m_onDetached != null)
         {

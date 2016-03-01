@@ -23,43 +23,50 @@ public sealed class WordTilesMainMenu : MonoBehaviour
     /// The label that displays the current round.
     /// </summary>
     [SerializeField]
-    [Tooltip("Label that displays the current round")]
+    [Tooltip("Label that displays the current round.")]
     private Text m_currentRoundLabel;
 
     /// <summary>
     /// The label that displays the current score.
     /// </summary>
     [SerializeField]
-    [Tooltip("Label that displays the current score")]
+    [Tooltip("Label that displays the current score.")]
     private Text m_scoreLabel;
 
     /// <summary>
     /// Button used to submit the word formed by the tiles in the slots.
     /// </summary>
     [SerializeField]
-    [Tooltip("Button used to submit the formed word for a score")]
+    [Tooltip("Button used to submit the formed word for a score.")]
     private Button m_submitButton;
 
     /// <summary>
     /// Button use to reshuffle the tiles.
     /// </summary>
     [SerializeField]
-    [Tooltip("Button used to shuffle the letters")]
+    [Tooltip("Button used to shuffle the letters.")]
     private Button m_shuffleButton;
 
     /// <summary>
     /// The group of tile slots.
     /// </summary>
     [SerializeField]
-    [Tooltip("Group that contains all of the tile slots")]
+    [Tooltip("Group that contains all of the tile slots.")]
     private WordTileSlotGroup m_slotGroup;
 
     /// <summary>
     /// The word tray that contains all of the tiles.
     /// </summary>
     [SerializeField]
-    [Tooltip("Tray that contains all of the playable tiles")]
+    [Tooltip("Tray that contains all of the playable tiles.")]
     private WordTileTray m_wordTray;
+
+    /// <summary>
+    /// Floating text spawner to display messages and text.
+    /// </summary>
+    [SerializeField]
+    [Tooltip("Floating text spawner to display messages and text.")]
+    private FloatingTextSpawner m_textSpawner;
 
     /// <summary>
     /// Sound played when a valid word is submitted.
@@ -167,7 +174,26 @@ public sealed class WordTilesMainMenu : MonoBehaviour
     {
         //Check to see if we have a valid word
         string tileWord = this.m_slotGroup.GetPlayableWord();
-        if (string.IsNullOrEmpty(tileWord) == false && WordTilesGameManager.Instance.DoesWordExist(tileWord))
+        if (string.IsNullOrEmpty(tileWord) == true || WordTilesGameManager.Instance.DoesWordExist(tileWord) == false)
+        {
+            //Play the invalid sound.
+            AudioManager.Instance.PlaySound(InvalidWordSubmittedSound);
+
+            //Display floating text
+            if (m_slotGroup.AreSlotsEmpty() == true)
+            {
+                m_textSpawner.ShowFloatingText("No tiles played!");
+            }
+            else if (string.IsNullOrEmpty(tileWord) == true)
+            {
+                m_textSpawner.ShowFloatingText("Bad tile layout!");
+            }
+            else
+            {
+                m_textSpawner.ShowFloatingText("Word does not exist!");
+            }
+        }
+        else
         {
             //Play the submit sound
             AudioManager.Instance.PlaySound(WordSubmittedSound);
@@ -175,12 +201,11 @@ public sealed class WordTilesMainMenu : MonoBehaviour
             //Add to the score
             WordTilesGameManager.Instance.AddToScore((uint)tileWord.Length);
 
+            //Display the score with the floating text
+            m_textSpawner.ShowFloatingText("+" + tileWord.Length.ToString());
+
+            //End the round
             WordTileStateMachine.Instance.SM.SetCurrentStateTo<WordTileState_EndRound>();
-        }
-        else
-        {
-            //Play the invalid sound.
-            AudioManager.Instance.PlaySound(InvalidWordSubmittedSound);
         }
     }
 
@@ -192,8 +217,17 @@ public sealed class WordTilesMainMenu : MonoBehaviour
         if (m_wordTray.IsShuffling() == false)
         {
             m_slotGroup.Reset();
-            m_wordTray.ShuffleInNewTiles(null);
+            EnableButtons(false);
+            m_wordTray.ShuffleInNewTiles(OnShuffleComplete);
         }
+    }
+
+    /// <summary>
+    /// Callback called when the shuffle is complete.
+    /// </summary>
+    private void OnShuffleComplete()
+    {
+        EnableButtons(true);
     }
 
     /// <summary>

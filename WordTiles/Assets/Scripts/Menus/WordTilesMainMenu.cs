@@ -174,7 +174,7 @@ public sealed class WordTilesMainMenu : MonoBehaviour
     {
         //Check to see if we have a valid word
         string tileWord = this.m_slotGroup.GetPlayableWord();
-        if (string.IsNullOrEmpty(tileWord) == true || WordTilesGameManager.Instance.DoesWordExist(tileWord) == false)
+        if (m_slotGroup.AreSlotsPlayable() == false || WordTilesGameManager.Instance.DoesWordExist(tileWord) == false)
         {
             //Play the invalid sound.
             AudioManager.Instance.PlaySound(InvalidWordSubmittedSound);
@@ -184,7 +184,7 @@ public sealed class WordTilesMainMenu : MonoBehaviour
             {
                 m_textSpawner.ShowFloatingText("No tiles played!");
             }
-            else if (string.IsNullOrEmpty(tileWord) == true)
+            else if (m_slotGroup.AreSlotsPlayable() == false)
             {
                 m_textSpawner.ShowFloatingText("Bad tile layout!");
             }

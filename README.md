@@ -17,3 +17,7 @@ Next, select the platform you wish to build for an hit "build".
 
 Building for iOS is a bit more complicated because of the provisioning profile requirements. Unity has provided some steps on how to build Unity projects to iOS devices here:
 http://docs.unity3d.com/Manual/iphone-GettingStarted.html
+
+# Credits
+
+Background music is "Local Forecast - Elevator" Kevin MacLeod, licensed under Creative Commons.

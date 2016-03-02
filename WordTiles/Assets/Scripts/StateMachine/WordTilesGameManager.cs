@@ -15,7 +15,7 @@ public sealed class WordTilesGameManager
     /// <summary>
     /// How many rounds can we play before the game ends.
     /// </summary>
-    public const uint MAX_ROUNDS = 1;
+    public const uint MAX_ROUNDS = 5;
 
     /// <summary>
     /// The number of tiles that go in the tray.

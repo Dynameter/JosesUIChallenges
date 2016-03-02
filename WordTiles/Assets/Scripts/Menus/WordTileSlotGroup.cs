@@ -84,6 +84,9 @@ public sealed class WordTileSlotGroup : MonoBehaviour
             }
         }
 
+        //Add a little delay
+        yield return new WaitForSeconds(lerpDuration);
+
         //If there is a callback, call it.
         if (argOnPopped != null)
         {

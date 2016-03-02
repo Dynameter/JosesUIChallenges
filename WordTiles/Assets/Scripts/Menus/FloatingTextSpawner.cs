@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public sealed class FloatingTextSpawner : MonoBehaviour
 {
+    #region PrivateMembers
     /// <summary>
     /// Path to the floating text prefab.
     /// </summary>
@@ -45,7 +46,9 @@ public sealed class FloatingTextSpawner : MonoBehaviour
     /// Pool used to create labels.
     /// </summary>
     private Pool<Text> m_floatTextPool;
+    #endregion PrivateMembers
 
+    #region PrivateMethods
     /// <summary>
     /// Initializes the spawner.
     /// </summary>
@@ -54,6 +57,37 @@ public sealed class FloatingTextSpawner : MonoBehaviour
         m_floatTextPool = new Pool<Text>(CreatePooledFloatingText, null, null, CleanupPooledFloatingText, 1);
     }
 
+    /// <summary>
+    /// Coroutine used to position and fade out the floating text.
+    /// </summary>
+    /// <param name="argFloatingText">The floating text label to move and fade.</param>
+    /// <returns>Returns enumerator used to run the coroutine.</returns>
+    private IEnumerator DisplayFloatingText(Text argFloatingText)
+    {
+        Transform textTransform = argFloatingText.transform;
+
+        //Move the label up while fading it out.
+        float currentDuration = 0f;
+        while (currentDuration < FLOATING_DURATION)
+        {
+            currentDuration += Time.deltaTime;
+            float lerpFactor = (currentDuration / FLOATING_DURATION);
+
+            float currentHeight = Mathf.Lerp(0f, FLOATING_POSITION, lerpFactor);
+            textTransform.localPosition = new Vector3(textTransform.localPosition.x, currentHeight, textTransform.localPosition.z);
+
+            float currentAlpha = Mathf.Lerp(1f, 0f, lerpFactor);
+            argFloatingText.color = new Color(argFloatingText.color.r, argFloatingText.color.g, argFloatingText.color.b, currentAlpha);
+
+            yield return null;
+        }
+
+        //Put the label back in the pool
+        m_floatTextPool.Release(argFloatingText);
+    }
+    #endregion PrivateMethods
+
+    #region PublicMethods
     /// <summary>
     /// Creates a pooled label.
     /// </summary>
@@ -91,33 +125,5 @@ public sealed class FloatingTextSpawner : MonoBehaviour
 
         StartCoroutine(DisplayFloatingText(pooledFloatingText));
     }
-
-    /// <summary>
-    /// Coroutine used to position and fade out the floating text.
-    /// </summary>
-    /// <param name="argFloatingText">The floating text label to move and fade.</param>
-    /// <returns>Returns enumerator used to run the coroutine.</returns>
-    private IEnumerator DisplayFloatingText(Text argFloatingText)
-    {
-        Transform textTransform = argFloatingText.transform;
-
-        //Move the label up while fading it out.
-        float currentDuration = 0f;
-        while (currentDuration < FLOATING_DURATION)
-        {
-            currentDuration += Time.deltaTime;
-            float lerpFactor = (currentDuration / FLOATING_DURATION);
-
-            float currentHeight = Mathf.Lerp(0f, FLOATING_POSITION, lerpFactor);
-            textTransform.localPosition = new Vector3(textTransform.localPosition.x, currentHeight, textTransform.localPosition.z);
-
-            float currentAlpha = Mathf.Lerp(1f, 0f, lerpFactor);
-            argFloatingText.color = new Color(argFloatingText.color.r, argFloatingText.color.g, argFloatingText.color.b, currentAlpha);
-
-            yield return null;
-        }
-
-        //Put the label back in the pool
-        m_floatTextPool.Release(argFloatingText);
-    }
+    #endregion PublicMethods
 }

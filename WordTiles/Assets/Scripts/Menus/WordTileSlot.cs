@@ -5,11 +5,31 @@ using UnityEngine.EventSystems;
 
 public sealed class WordTileSlot : MonoBehaviour, IDropHandler
 {
+    #region PrivateMembers
     /// <summary>
     /// The tile that is attached to the slot.
     /// </summary>
     private WordTile m_attachedTile;
+    #endregion PrivateMembers
 
+    #region PrivateMethods
+    /// <summary>
+    /// Attached the word tile to the slot.
+    /// </summary>
+    /// <param name="argTile">The tile to attach.</param>
+    private void SnapTileToSlot(WordTile argTile)
+    {
+        m_attachedTile = argTile;
+        m_attachedTile.SetGrandParent(this.transform);
+
+        RectTransform tileParent = argTile.GetParent();
+        tileParent.position = this.transform.position;
+
+        m_attachedTile.SetOnDetachedCallback(DetachTile);
+    }
+    #endregion PrivateMethods
+
+    #region PublicMethods
     /// <summary>
     /// Handles a drop event.
     /// </summary>
@@ -24,26 +44,11 @@ public sealed class WordTileSlot : MonoBehaviour, IDropHandler
             if (m_attachedTile != null)
             {
                 WordTile attachedTile = m_attachedTile;
-                WordTilesGameManager.Instance.MainMenuScreen.GetWordTileTray().ReturnTile(attachedTile);
+                WordTilesGameManager.Instance.GetMainMenu().GetWordTileTray().ReturnTile(attachedTile);
             }
 
             SnapTileToSlot(tile);
         }
-    }
-
-    /// <summary>
-    /// Attached the word tile to the slot.
-    /// </summary>
-    /// <param name="argTile">The tile to attach.</param>
-    private void SnapTileToSlot(WordTile argTile)
-    {
-        m_attachedTile = argTile;
-        m_attachedTile.SetGrandParent(this.transform);
-
-        RectTransform tileParent = argTile.GetParent();
-        tileParent.position = this.transform.position;
-
-        m_attachedTile.SetOnDetachedCallback(DetachTile);
     }
 
     /// <summary>
@@ -74,4 +79,5 @@ public sealed class WordTileSlot : MonoBehaviour, IDropHandler
     {
         return m_attachedTile;
     }
+    #endregion PublicMethods
 }

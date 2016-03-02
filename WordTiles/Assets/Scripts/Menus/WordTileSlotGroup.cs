@@ -3,12 +3,15 @@ using System.Collections;
 
 public sealed class WordTileSlotGroup : MonoBehaviour
 {
+    #region PrivateMembers
     /// <summary>
     /// Slots that belong to this group.
     /// </summary>
     [SerializeField]
     private WordTileSlot[] m_slots = new WordTileSlot[WordTilesGameManager.NUMBER_OF_PLAYABLE_TILES];
+    #endregion PrivateMembers
 
+    #region PublicMethods
     /// <summary>
     /// Detaches all word tiles from the slots.
     /// </summary>
@@ -82,4 +85,5 @@ public sealed class WordTileSlotGroup : MonoBehaviour
 
         return sb.ToString().ToLower();
     }
+    #endregion PublicMethods
 }

@@ -3,6 +3,7 @@ using System.Collections;
 
 public class JellyEffect : MonoBehaviour
 {
+    #region StaticMembers
     /// <summary>
     /// Default speed of the jelly effect.
     /// </summary>
@@ -12,7 +13,9 @@ public class JellyEffect : MonoBehaviour
     /// Default intensity of the jelly effect. Tied to how much the object should scale up by.
     /// </summary>
     public static readonly Vector2 DEFAULT_ITENSITY = new Vector2(0.05f, 0.05f);
+    #endregion StaticMembers
 
+    #region PrivateMembers
     /// <summary>
     /// The speed of the jelly effect
     /// </summary>
@@ -31,7 +34,9 @@ public class JellyEffect : MonoBehaviour
     /// Cached transform.
     /// </summary>
     private Transform m_transform;
+    #endregion PrivateMembers
 
+    #region PrivateMethods
     /// <summary>
     /// Initializes the jelly effect.
     /// </summary>
@@ -45,6 +50,9 @@ public class JellyEffect : MonoBehaviour
     /// </summary>
     public void Update()
     {
-        m_transform.localScale = new Vector3(1f + Mathf.Abs(Mathf.Cos(Time.time * m_speed)) * m_intensity.x, 1f + Mathf.Abs(Mathf.Sin(Time.time * m_speed)) * m_intensity.y, 1f);
+        m_transform.localScale = new Vector3(1f + Mathf.Abs(Mathf.Cos(Time.time * m_speed)) * m_intensity.x, //X Scale
+                                             1f + Mathf.Abs(Mathf.Sin(Time.time * m_speed)) * m_intensity.y, //Y Scale
+                                             1f); //Z Scale
     }
+    #endregion PrivateMethods
 }

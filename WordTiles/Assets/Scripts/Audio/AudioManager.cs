@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
+    #region StaticMembers
     /// <summary>
     /// Singleton instance of the audio manager.
     /// </summary>
@@ -25,7 +26,9 @@ public class AudioManager : MonoBehaviour
             return _instance;
         }
     }
+    #endregion StaticMembers
 
+    #region PrivateMembers
     /// <summary>
     /// Pool that creates reusable audio sources.
     /// </summary>
@@ -44,7 +47,9 @@ public class AudioManager : MonoBehaviour
         m_audioSourcePool = new Pool<AudioSource>(CreatePooledAudioSource, 2);
         m_playingAudio = new List<AudioSource>();
     }
+    #endregion PrivateMembers
 
+    #region PublicMethods
     /// <summary>
     /// Update cleansup any audio sources that are no longer being used.
     /// </summary>
@@ -60,6 +65,21 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Plays an audio clip.
+    /// </summary>
+    /// <param name="argAudioClip">The audio clip to play.</param>
+    public void PlaySound(AudioClip argAudioClip)
+    {
+        AudioSource source = m_audioSourcePool.Fetch();
+
+        source.clip = argAudioClip;
+        source.Play();
+        m_playingAudio.Add(source);
+    }
+    #endregion PublicMethods
+
+    #region PrivateMethods
     /// <summary>
     /// Creates a pooled audio source that will be attached to the manager game object.
     /// </summary>
@@ -77,17 +97,5 @@ public class AudioManager : MonoBehaviour
     {
         argAudioSource.clip = null;
     }
-
-    /// <summary>
-    /// Plays an audio clip.
-    /// </summary>
-    /// <param name="argAudioClip">The audio clip to play.</param>
-    public void PlaySound(AudioClip argAudioClip)
-    {
-        AudioSource source = m_audioSourcePool.Fetch();
-
-        source.clip = argAudioClip;
-        source.Play();
-        m_playingAudio.Add(source);
-    }
+    #endregion PrivateMethods
 }

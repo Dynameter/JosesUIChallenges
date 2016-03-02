@@ -6,8 +6,7 @@ public sealed class WordTileState_EndRound : State
     /// <summary>
     /// Checks if the game has ended or if we should continue playing another round.
     /// </summary>
-    /// <param name="argArguments">State arguments.</param>
-    public override void Enter(System.Collections.Generic.Dictionary<string, object> argArguments)
+    public override void Enter()
     {
         //If the round that just ended was the last round, then end the game.
         if (WordTilesGameManager.Instance.IsOnLastRound() == true)

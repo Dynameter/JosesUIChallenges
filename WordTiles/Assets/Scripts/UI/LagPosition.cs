@@ -3,11 +3,14 @@ using System.Collections;
 
 public class LagPosition : MonoBehaviour, ILaggable
 {
+    #region StaticMembers
     /// <summary>
     /// Default speed at which the object will catch up to the parent.
     /// </summary>
     private const float DEFAULT_SPEED = 10f;
+    #endregion StaticMembers
 
+    #region PrivateMembers
     /// <summary>
     /// Speed at which the object catches up to the parent position
     /// </summary>
@@ -44,7 +47,31 @@ public class LagPosition : MonoBehaviour, ILaggable
     /// Offset applies to the local position.
     /// </summary>
     private Vector3 m_offset = Vector3.zero;
+    #endregion PrivateMembers
 
+    #region PrivateMethods
+    /// <summary>
+    /// Updates the movement.
+    /// </summary>
+    private void LateUpdate()
+    {
+        SmoothPosition(Time.deltaTime);
+    }
+
+    /// <summary>
+    /// Smoothly adds a "lag" between this position and the parent position.
+    /// </summary>
+    /// <param name="argDelta">Time passed between last frame.</param>
+    private void SmoothPosition(float argDelta)
+    {
+        //Update the position
+        Vector3 targPos = (m_parent.position + m_parent.rotation * m_relPosition);
+        m_absPosition = Vector3.Lerp(m_absPosition, targPos, Mathf.Clamp01(argDelta * m_movementSpeed));
+        m_transform.position = m_absPosition;
+    }
+    #endregion PrivateMethods
+
+    #region PublicMethods
     /// <summary>
     /// Caches transform values.
     /// </summary>
@@ -73,24 +100,5 @@ public class LagPosition : MonoBehaviour, ILaggable
         m_offset = argOffset;
         Reset();
     }
-
-    /// <summary>
-    /// Updates the movement.
-    /// </summary>
-    private void LateUpdate()
-    {
-        SmoothPosition(Time.deltaTime);
-    }
-
-    /// <summary>
-    /// Smoothly adds a "lag" between this position and the parent position.
-    /// </summary>
-    /// <param name="argDelta">Time passed between last frame.</param>
-    private void SmoothPosition(float argDelta)
-    {
-        //Update the position
-        Vector3 targPos = (m_parent.position + m_parent.rotation * m_relPosition);
-        m_absPosition = Vector3.Lerp(m_absPosition, targPos, Mathf.Clamp01(argDelta * m_movementSpeed));
-        m_transform.position = m_absPosition;
-    }
+    #endregion PublicMethods
 }

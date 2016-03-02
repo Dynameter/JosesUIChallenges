@@ -4,6 +4,7 @@ using System.Collections;
 
 public sealed class WordTilesMainMenu : MonoBehaviour
 {
+    #region StaticMembers
     /// <summary>
     /// Path to the prefab
     /// </summary>
@@ -19,6 +20,50 @@ public sealed class WordTilesMainMenu : MonoBehaviour
     /// </summary>
     public const string PATH_TO_INVALID_WORD_SUBMIT_SOUND = "Sounds/notice";
 
+    /// <summary>
+    /// Sound played when a valid word is submitted.
+    /// </summary>
+    private static AudioClip _wordSubmittedSound;
+
+    /// <summary>
+    /// Sound played when a valid word is submitted.
+    /// </summary>
+    public static AudioClip WordSubmittedSound
+    {
+        get
+        {
+            if (_wordSubmittedSound == null)
+            {
+                _wordSubmittedSound = Resources.Load<AudioClip>(PATH_TO_WORD_SUBMIT_SOUND);
+            }
+
+            return _wordSubmittedSound;
+        }
+    }
+
+    /// <summary>
+    /// Sound played when an invalid word is submitted.
+    /// </summary>
+    private static AudioClip _invalidWordSubmittedSound;
+
+    /// <summary>
+    /// Sound played when an invalid word is submitted.
+    /// </summary>
+    public static AudioClip InvalidWordSubmittedSound
+    {
+        get
+        {
+            if (_invalidWordSubmittedSound == null)
+            {
+                _invalidWordSubmittedSound = Resources.Load<AudioClip>(PATH_TO_INVALID_WORD_SUBMIT_SOUND);
+            }
+
+            return _invalidWordSubmittedSound;
+        }
+    }
+    #endregion StaticMembers
+
+    #region PrivateMembers
     /// <summary>
     /// The label that displays the current round.
     /// </summary>
@@ -67,86 +112,19 @@ public sealed class WordTilesMainMenu : MonoBehaviour
     [SerializeField]
     [Tooltip("Floating text spawner to display messages and text.")]
     private FloatingTextSpawner m_textSpawner;
+    #endregion PrivateMembers
 
-    /// <summary>
-    /// Sound played when a valid word is submitted.
-    /// </summary>
-    private static AudioClip _wordSubmittedSound;
-
-    /// <summary>
-    /// Sound played when a valid word is submitted.
-    /// </summary>
-    public static AudioClip WordSubmittedSound
-    {
-        get
-        {
-            if (_wordSubmittedSound == null)
-            {
-                _wordSubmittedSound = Resources.Load<AudioClip>(PATH_TO_WORD_SUBMIT_SOUND);
-            }
-
-            return _wordSubmittedSound;
-        }
-    }
-
-    /// <summary>
-    /// Sound played when an invalid word is submitted.
-    /// </summary>
-    private static AudioClip _invalidWordSubmittedSound;
-
-    /// <summary>
-    /// Sound played when an invalid word is submitted.
-    /// </summary>
-    public static AudioClip InvalidWordSubmittedSound
-    {
-        get
-        {
-            if (_invalidWordSubmittedSound == null)
-            {
-                _invalidWordSubmittedSound = Resources.Load<AudioClip>(PATH_TO_INVALID_WORD_SUBMIT_SOUND);
-            }
-
-            return _invalidWordSubmittedSound;
-        }
-    }
-
+    #region PrivateMethods
     /// <summary>
     /// Initialized the main menu.
     /// </summary>
-    public void Awake()
+    private void Awake()
     {
         WordTilesGameManager.Instance.OnScoreChanged += OnScoreChanged;
         WordTilesGameManager.Instance.OnCurrentRoundChanged += OnRoundChanged;
 
         m_submitButton.onClick.AddListener(OnSubmitButtonPressed);
         m_shuffleButton.onClick.AddListener(OnShuffleButtonPressed);
-    }
-
-    /// <summary>
-    /// Resets the slot group and word tile tray.
-    /// </summary>
-    public void Reset()
-    {
-        m_slotGroup.Reset();
-        m_wordTray.Reset();
-    }
-
-    /// <summary>
-    /// Gets the word tile slot group.
-    /// </summary>
-    /// <returns>Returns the word tile slot group.</returns>
-    public WordTileSlotGroup GetWordTileSlotGroup()
-    {
-        return m_slotGroup;
-    }
-
-    /// <summary>
-    /// Gets the word tile tray instance.
-    /// </summary>
-    /// <returns>The word tile tray instance attached to this menu</returns>
-    public WordTileTray GetWordTileTray()
-    {
-        return m_wordTray;
     }
 
     /// <summary>
@@ -229,6 +207,35 @@ public sealed class WordTilesMainMenu : MonoBehaviour
     {
         EnableButtons(true);
     }
+    #endregion PrivateMethods
+
+    #region PublicMethods
+    /// <summary>
+    /// Resets the slot group and word tile tray.
+    /// </summary>
+    public void Reset()
+    {
+        m_slotGroup.Reset();
+        m_wordTray.Reset();
+    }
+
+    /// <summary>
+    /// Gets the word tile slot group.
+    /// </summary>
+    /// <returns>Returns the word tile slot group.</returns>
+    public WordTileSlotGroup GetWordTileSlotGroup()
+    {
+        return m_slotGroup;
+    }
+
+    /// <summary>
+    /// Gets the word tile tray instance.
+    /// </summary>
+    /// <returns>The word tile tray instance attached to this menu</returns>
+    public WordTileTray GetWordTileTray()
+    {
+        return m_wordTray;
+    }
 
     /// <summary>
     /// Enables or disables the buttons.
@@ -239,4 +246,5 @@ public sealed class WordTilesMainMenu : MonoBehaviour
         m_submitButton.interactable = argEnable;
         m_shuffleButton.interactable = argEnable;
     }
+    #endregion PublicMethods
 }

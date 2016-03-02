@@ -5,6 +5,7 @@
 /// </summary>
 public sealed class WordTileStateMachine : MonoBehaviour
 {
+    #region StaticMembers
     /// <summary>
     /// Singleton instance of the state machine.
     /// </summary>
@@ -36,11 +37,13 @@ public sealed class WordTileStateMachine : MonoBehaviour
             return m_stateMachine;
         }
     }
+    #endregion StaticMembers
 
+    #region PrivateMethods
     /// <summary>
     /// Sets the starting state
     /// </summary>
-    public void Start()
+    private void Start()
     {
         _instance = this;
         m_stateMachine.SetCurrentStateTo<WordTileState_Init>();
@@ -49,8 +52,9 @@ public sealed class WordTileStateMachine : MonoBehaviour
     /// <summary>
     /// Calls update on the state machine.
     /// </summary>
-    public void Update()
+    private void Update()
     {
         m_stateMachine.UpdateState();
     }
+    #endregion PrivateMethods
 }

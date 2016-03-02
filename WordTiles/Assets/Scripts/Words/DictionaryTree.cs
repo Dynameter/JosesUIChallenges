@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public class DictionaryTreeNode
 {
-	/// <summary>
+    #region PrivateMembers
+    /// <summary>
     /// The letter stored by this node
 	/// </summary>
 	private readonly char m_letter;
@@ -18,8 +19,10 @@ public class DictionaryTreeNode
     /// Child nodes.
 	/// </summary>
 	private Dictionary<char, DictionaryTreeNode> m_childNodes = null;
-	
-	/// <summary>
+    #endregion PrivateMembers
+
+    #region PublicMethods
+    /// <summary>
     /// Constructor that takes in the letter.
 	/// </summary>
 	/// <param name="nodeLetter">Letter to store in the node</param>
@@ -92,17 +95,21 @@ public class DictionaryTreeNode
 		{
 			return null;
 		}
-	}
+    }
+    #endregion PublicMethods
 }
 
 
 public class DictionaryTree
 {
-	/// <summary>
+    #region PrivateMembers
+    /// <summary>
     /// The root node
 	/// </summary>
-	DictionaryTreeNode m_rootNode = new DictionaryTreeNode('\0');
-	
+	private DictionaryTreeNode m_rootNode = new DictionaryTreeNode('\0');
+    #endregion PrivateMembers
+
+    #region PublicMethods
     /// <summary>
     /// Adds a word to the tree.
     /// </summary>
@@ -162,6 +169,6 @@ public class DictionaryTree
 	public bool DoesWordExist(char[] wordToCheck)
 	{
 		return DoesWordExist(new string(wordToCheck));
-	}
-	
+    }
+    #endregion PublicMethods
 }

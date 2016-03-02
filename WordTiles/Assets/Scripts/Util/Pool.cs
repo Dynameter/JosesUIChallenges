@@ -22,6 +22,14 @@ public interface IPool
 /// <typeparam name="PoolType">The type of the pooled items.</typeparam>
 public sealed class Pool<PoolType> : IPool where PoolType : class
 {
+    #region StaticMembers
+    /// <summary>
+    /// Default number of starting pool items created on init.
+    /// </summary>
+    public const int DEFAULT_POOL_SIZE = 32;
+    #endregion StaticMembers
+
+    #region PrivateMembers
     /// <summary>
     /// Stack used to contain the pooled items
     /// </summary>
@@ -51,12 +59,9 @@ public sealed class Pool<PoolType> : IPool where PoolType : class
     /// The initial number of items the pool to create on init.
     /// </summary>
     private readonly int _initialPoolSize;
+    #endregion PrivateMembers
 
-    /// <summary>
-    /// Default number of starting pool items created on init.
-    /// </summary>
-    public const int DEFAULT_POOL_SIZE = 32;
-
+    #region PublicMethods
     /// <summary>
     /// Constructor that takes in the pool factory create method to create items and sets the starting items to the number specified.
     /// </summary>
@@ -169,4 +174,5 @@ public sealed class Pool<PoolType> : IPool where PoolType : class
             this._stack.Push(argPoolObject);
         }
     }
+    #endregion PublicMethods
 }

@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 public class SoundButton : Button
 {
+    #region StaticMembers
     /// <summary>
     /// Path to the tile picked up sound.
     /// </summary>
@@ -56,7 +57,9 @@ public class SoundButton : Button
             return _clickTwo;
         }
     }
+    #endregion StaticMembers
 
+    #region PublicMethods
     /// <summary>
     /// Event raised when the mouse/finger is down on the button.
     /// </summary>
@@ -84,4 +87,5 @@ public class SoundButton : Button
             AudioManager.Instance.PlaySound(ClickTwo);
         }
     }
+    #endregion PublicMethods
 }

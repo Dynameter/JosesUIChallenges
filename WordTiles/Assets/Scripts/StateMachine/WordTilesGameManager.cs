@@ -5,6 +5,7 @@ using UnityEngine;
 
 public sealed class WordTilesGameManager
 {
+    #region StaticMembers
     /// <summary>
     /// Method signature for a game manager value update callback.
     /// </summary>
@@ -14,13 +15,16 @@ public sealed class WordTilesGameManager
     /// <summary>
     /// How many rounds can we play before the game ends.
     /// </summary>
-    public const uint MAX_ROUNDS = 10;
+    public const uint MAX_ROUNDS = 1;
 
     /// <summary>
     /// The number of tiles that go in the tray.
     /// </summary>
     public const int NUMBER_OF_PLAYABLE_TILES = 8;
 
+    /// <summary>
+    /// Path to the words file
+    /// </summary>
     public const string PATH_TO_WORDS_FILE = "Words/AllWords";
 
     /// <summary>
@@ -43,32 +47,13 @@ public sealed class WordTilesGameManager
             return _instance;
         }
     }
+    #endregion StaticMembers
 
+    #region PrivateMembers
     /// <summary>
     /// Accumulated score.
     /// </summary>
     private uint m_score;
-
-    /// <summary>
-    /// Accumulated score.
-    /// </summary>
-    public uint Score
-    {
-        get
-        {
-            return m_score;
-        }
-
-        private set
-        {
-            m_score = value;
-
-            if (OnScoreChanged != null)
-            {
-                OnScoreChanged(m_score);
-            }
-        }
-    }
 
     /// <summary>
     /// Event called when the score changes.
@@ -81,46 +66,9 @@ public sealed class WordTilesGameManager
     private uint m_currentRound;
 
     /// <summary>
-    /// Current round the player is playing on.
-    /// </summary>
-    public uint CurrentRound
-    {
-        get
-        {
-            return m_currentRound;
-        }
-
-        private set
-        {
-            m_currentRound = value;
-
-            if (OnCurrentRoundChanged != null)
-            {
-                OnCurrentRoundChanged(m_currentRound);
-            }
-        }
-    }
-
-    /// <summary>
     /// Main menu instance.
     /// </summary>
     private WordTilesMainMenu m_mainMenu;
-
-    /// <summary>
-    /// Main menu instance.
-    /// </summary>
-    public WordTilesMainMenu MainMenuScreen
-    {
-        get
-        {
-            return m_mainMenu;
-        }
-
-        set
-        {
-            m_mainMenu = value;
-        }
-    }
 
     /// <summary>
     /// Tree that contains all playable words.
@@ -131,7 +79,9 @@ public sealed class WordTilesGameManager
     /// Event called when the round changes.
     /// </summary>
     public event OnGameManagerValueChanged OnCurrentRoundChanged;
+    #endregion PrivateMembers
 
+    #region PrivateMethods
     /// <summary>
     /// Constructs and initialized the game manager.
     /// </summary>
@@ -161,6 +111,95 @@ public sealed class WordTilesGameManager
         }
     }
 
+    private void SetRound(uint argRound)
+    {
+        m_currentRound = argRound;
+
+        if (OnCurrentRoundChanged != null)
+        {
+            OnCurrentRoundChanged(m_currentRound);
+        }
+    }
+
+    private void SetScore(uint argScore)
+    {
+        m_score = argScore;
+
+        if (OnScoreChanged != null)
+        {
+            OnScoreChanged(m_score);
+        }
+    }
+    #endregion PrivateMethods
+
+    #region PublicMethods
+    /// <summary>
+    /// Resets the round and score back to zero.
+    /// </summary>
+    public void Reset()
+    {
+        SetScore(0);
+        SetRound(0);
+
+        if (m_mainMenu != null)
+        {
+            m_mainMenu.Reset();
+        }
+    }
+
+    /// <summary>
+    /// Gets the current score.
+    /// </summary>
+    /// <returns>Returns the current score.</returns>
+    public uint GetScore()
+    {
+        return m_score;
+    }
+
+    /// <summary>
+    /// Increment the round we are on.
+    /// </summary>
+    public void IncrementRound()
+    {
+        SetRound(m_currentRound + 1);
+    }
+
+    /// <summary>
+    /// Checks to see if the game is on the last playable round.
+    /// </summary>
+    /// <returns>Returns true if on the last playable round.</returns>
+    public bool IsOnLastRound()
+    {
+        return (m_currentRound == MAX_ROUNDS);
+    }
+
+    /// <summary>
+    /// Adds the value to the current score.
+    /// </summary>
+    /// <param name="argAmountToAdd">The amount to add to the score.</param>
+    public void AddToScore(uint argAmountToAdd)
+    {
+        SetScore(m_score + argAmountToAdd);
+    }
+
+    /// <summary>
+    /// Gets the main menu.
+    /// </summary>
+    /// <returns>Returns the active instance of the main menu.</returns>
+    public WordTilesMainMenu GetMainMenu()
+    {
+        return m_mainMenu;
+    }
+
+    /// <summary>
+    /// Sets the active instance of the main menu.
+    /// </summary>
+    /// <param name="argMainMenu">The instantiated main menu.</param>
+    public void SetMainMenu(WordTilesMainMenu argMainMenu)
+    {
+        m_mainMenu = argMainMenu;
+    }
+
     /// <summary>
     /// Checks to see if the given string is a playable word.
     /// </summary>
@@ -170,44 +209,5 @@ public sealed class WordTilesGameManager
     {
         return m_dictionaryTree.DoesWordExist(argWord);
     }
-
-    /// <summary>
-    /// Resets the round and score back to zero.
-    /// </summary>
-    public void Reset()
-    {
-        Score = 0;
-        CurrentRound = 0;
-
-        if (MainMenuScreen != null)
-        {
-            MainMenuScreen.Reset();
-        }
-    }
-
-    /// <summary>
-    /// Increment the round we are on.
-    /// </summary>
-    public void IncrementRound()
-    {
-        ++CurrentRound;
-    }
-
-    /// <summary>
-    /// Checks to see if the game is on the last playable round.
-    /// </summary>
-    /// <returns>Returns true if on the last playable round.</returns>
-    public bool IsOnLastRound()
-    {
-        return (CurrentRound == MAX_ROUNDS);
-    }
-
-    /// <summary>
-    /// Adds the value to the current score.
-    /// </summary>
-    /// <param name="argAmountToAdd">The amount to add to the score.</param>
-    public void AddToScore(uint argAmountToAdd)
-    {
-        Score += argAmountToAdd;
-    }
+    #endregion PublicMethods
 }

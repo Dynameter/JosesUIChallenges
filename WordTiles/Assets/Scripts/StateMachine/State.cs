@@ -9,8 +9,7 @@ public abstract class State
     /// <summary>
     /// Called when the state machine switches to this state.
     /// </summary>
-    /// <param name="argArguments">The entry arguments for the state.</param>
-    public virtual void Enter(Dictionary<string, object> argArguments) { }
+    public virtual void Enter() { }
 
     /// <summary>
     /// Called every frame by the state machine. Updates the state.

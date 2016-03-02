@@ -14,22 +14,11 @@ public class StateMachine
     /// <summary>
     /// Attempts to set the state to the given state type.
     /// </summary>
-    /// <typeparam name="StateType">The state we want to switch to.</typeparam>
+    /// <typeparam name="StateType">The state we want to switch to</typeparam>
     /// <returns>Returns true if we were able to switch to the given state.</returns>
     public bool SetCurrentStateTo<StateType>() where StateType : State, new()
     {
-        return SetCurrentStateTo<StateType>(null);
-    }
-
-    /// <summary>
-    /// Attempts to set the state to the given state type.
-    /// </summary>
-    /// <typeparam name="StateType">The state we want to switch to</typeparam>
-    /// <param name="argArguments">The enter arguments.</param>
-    /// <returns>Returns true if we were able to switch to the given state.</returns>
-    public bool SetCurrentStateTo<StateType>(Dictionary<string, object> argArguments) where StateType : State, new()
-    {
-        return SetCurrentStateTo(new StateType(), argArguments);
+        return SetCurrentStateTo(new StateType());
     }
 
     /// <summary>
@@ -38,17 +27,6 @@ public class StateMachine
     /// <param name="argStateToSwitchTo">The switch to state to.</param>
     /// <returns>Returns true if we were able to switch to the given state.</returns>
     public bool SetCurrentStateTo(State argStateToSwitchTo)
-    {
-        return SetCurrentStateTo(argStateToSwitchTo, null);
-    }
-
-    /// <summary>
-    /// Attempts to set the state to the given state.
-    /// </summary>
-    /// <param name="argStateToSwitchTo">The switch to state to.</param>
-    /// <param name="argArguments">The enter arguments.</param>
-    /// <returns>Returns true if we were able to switch to the given state.</returns>
-    public bool SetCurrentStateTo(State argStateToSwitchTo, Dictionary<string, object> argArguments)
     {
         if (this._currentState != null)
         {
@@ -65,7 +43,7 @@ public class StateMachine
 
         //Switch into the passed in state
         this._currentState = argStateToSwitchTo;
-        this._currentState.Enter(argArguments);
+        this._currentState.Enter();
 
         return true;
     }

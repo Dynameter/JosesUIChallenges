@@ -6,11 +6,17 @@ using UnityEngine.EventSystems;
 
 public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    #region StaticMembers
     /// <summary>
     /// Function signature for a tile detached callback.
     /// </summary>
     /// <param name="argDetachedTile">The tile that detached.</param>
     public delegate void OnWordTileDetached(WordTile argDetachedTile);
+
+    /// <summary>
+    /// How much distance should we be from the center of the tile.
+    /// </summary>
+    private const float DISTANCE_FROM_CENTER = 1.75f;
 
     /// <summary>
     /// Scale of the tile -before- it is dragged.
@@ -21,7 +27,9 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     /// Scale of the tile -while- it is being dragged. Makes it easier to see what you are moving.
     /// </summary>
     private static readonly Vector3 DRAGGED_SCALE = new Vector3(1.25f, 1.25f, 1f);
-    
+    #endregion StaticMembers
+
+    #region PrivateMembers
     /// <summary>
     /// The UI label used to display the letter for this tile.
     /// </summary>
@@ -67,7 +75,9 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     /// Callback called when the tile is detached.
     /// </summary>
     private OnWordTileDetached m_onDetached;
+    #endregion PrivateMembers
 
+    #region ProtectedMethods
     /// <summary>
     /// Caches all of the components on startup.
     /// </summary>
@@ -83,7 +93,7 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
         if (m_lagPosition != null)
         {
             m_lagPosition.Init();
-            m_lagPosition.SetOffset(new Vector3(0f, -(m_transform.rect.height / 1.75f), 0f));
+            m_lagPosition.SetOffset(new Vector3(0f, -(m_transform.rect.height / DISTANCE_FROM_CENTER), 0f));
             m_lagPosition.enabled = false;
         }
 
@@ -94,7 +104,9 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
             m_lagRotation.enabled = false;
         }
     }
+    #endregion ProtectedMethods
 
+    #region PublicMethods
     /// <summary>
     /// Sets the letter and updates the label.
     /// </summary>
@@ -123,7 +135,7 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
         if (IsInteractable() == true)
         {
             //Set the parent to the tray so we can return it if not dropped on a slot.
-            WordTileTray tray = WordTilesGameManager.Instance.MainMenuScreen.GetWordTileTray();
+            WordTileTray tray = WordTilesGameManager.Instance.GetMainMenu().GetWordTileTray();
             SetGrandParent(tray.transform);
 
             //Prevent the tile from blocking raycasts so the slot can receive the drop event.
@@ -140,12 +152,6 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
             {
                 m_lagRotation.Reset();
                 m_lagRotation.enabled = true;
-            }
-
-            //Call the detach callback
-            if (m_onDetached != null)
-            {
-                m_onDetached(this);
             }
         }
     }
@@ -186,7 +192,7 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
             }
 
             //Check to see if we are attached to a slot. If not, return to the tray.
-            WordTileTray tray = WordTilesGameManager.Instance.MainMenuScreen.GetWordTileTray();
+            WordTileTray tray = WordTilesGameManager.Instance.GetMainMenu().GetWordTileTray();
             if (m_parent.parent == tray.transform)
             {
                 tray.ReturnTile(this);
@@ -247,4 +253,5 @@ public sealed class WordTile : SoundButton, IBeginDragHandler, IDragHandler, IEn
     {
         m_onDetached = argOnDetach;
     }
+    #endregion PublicMethods
 }

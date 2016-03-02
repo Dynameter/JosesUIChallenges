@@ -3,8 +3,12 @@ using System.Collections;
 
 public sealed class WordTileState_EndGame : State
 {
-    public override void Enter(System.Collections.Generic.Dictionary<string, object> argArguments)
+    /// <summary>
+    /// Displays the game over screen
+    /// </summary>
+    public override void Enter()
     {
-        WordTileStateMachine.Instance.SM.SetCurrentStateTo<WordTileState_StartGame>();
+        WordTileEndOfGame endOfGamePopup = WordTileEndOfGame.Instantiate<WordTileEndOfGame>(Resources.Load<WordTileEndOfGame>(WordTileEndOfGame.PATH_TO_END_OF_GAME_MENU));
+        endOfGamePopup.GetComponent<RectTransform>().SetParent(WordTileStateMachine.Instance.transform, false);
     }
 }

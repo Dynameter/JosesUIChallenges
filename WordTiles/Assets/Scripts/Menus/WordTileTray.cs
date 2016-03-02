@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class WordTileTray : MonoBehaviour
 {
+    #region StaticMembers
     /// <summary>
     /// Duration in seconds that each tile should take to "shuffle" in.
     /// </summary>
@@ -25,22 +26,6 @@ public class WordTileTray : MonoBehaviour
     private const string PATH_TO_SHUFFLE_SOUND = "Sounds/whoosh";
 
     /// <summary>
-    /// The playable tiles.
-    /// </summary>
-    [SerializeField]
-    private List<WordTile> m_wordTiles;
-
-    /// <summary>
-    /// The starting positions for each of the tiles.
-    /// </summary>
-    private Vector3[] m_wordTilesStartingPos = new Vector3[WordTilesGameManager.NUMBER_OF_PLAYABLE_TILES];
-
-    /// <summary>
-    /// If the tray is being shuffled
-    /// </summary>
-    private bool m_isShuffling = false;
-
-    /// <summary>
     /// Sound played when a tile is shuffled in.
     /// </summary>
     private static AudioClip _shuffleSound;
@@ -60,63 +45,27 @@ public class WordTileTray : MonoBehaviour
             return _shuffleSound;
         }
     }
+    #endregion StaticMembers
+
+    #region PrivateMembers
+    /// <summary>
+    /// The playable tiles.
+    /// </summary>
+    [SerializeField]
+    private List<WordTile> m_wordTiles;
 
     /// <summary>
-    /// Saves the starting positions of the tiles and hides them
+    /// The starting positions for each of the tiles.
     /// </summary>
-    public void Start()
-    {
-        for (int i = 0; i < m_wordTiles.Count; ++i)
-        {
-            m_wordTilesStartingPos[i] = m_wordTiles[i].GetParent().localPosition;
-        }
-
-        Reset();
-    }
+    private Vector3[] m_wordTilesStartingPos = new Vector3[WordTilesGameManager.NUMBER_OF_PLAYABLE_TILES];
 
     /// <summary>
-    /// Resets the position of the tiles and hides them.
+    /// If the tray is being shuffled
     /// </summary>
-    public void Reset()
-    {
-        for (int i = 0; i < m_wordTiles.Count; ++i)
-        {
-            //Set back to the initial values
-            m_wordTiles[i].gameObject.SetActive(false);
-            m_wordTiles[i].interactable = false;
+    private bool m_isShuffling = false;
+    #endregion PrivateMembers
 
-            m_wordTiles[i].SetGrandParent(this.transform, i);
-            m_wordTiles[i].GetParent().localPosition = m_wordTilesStartingPos[i];
-
-            m_wordTiles[i].SetOnDetachedCallback(null);
-
-            //Stop any movement coroutines
-            m_wordTiles[i].StopAllCoroutines();
-        }
-    }
-
-    /// <summary>
-    /// Checks if the tray tiles are being shuffled.
-    /// </summary>
-    /// <returns>Returns true if the tiles are being shuffled.</returns>
-    public bool IsShuffling()
-    {
-        return m_isShuffling;
-    }
-
-    /// <summary>
-    /// Shuffles in the new tiles and assigns a new letter to them.
-    /// </summary>
-    /// <param name="argOnShuffleComplete">Callback to call when the shuffle has finished animating.</param>
-    public void ShuffleInNewTiles(System.Action argOnShuffleComplete)
-    {
-        if (m_isShuffling == false)
-        {
-            m_isShuffling = true;
-            StartCoroutine(ShuffleInNewTilesCo(argOnShuffleComplete));
-        }
-    }
-
+    #region PrivateMethods
     /// <summary>
     /// Shuffles in the new tiles and assigns a new letter to them.
     /// </summary>
@@ -177,15 +126,6 @@ public class WordTileTray : MonoBehaviour
     /// Returns a tile from it's current position to the tray.
     /// </summary>
     /// <param name="argTileToReturn">The tile to return to the tray.</param>
-    public void ReturnTile(WordTile argTileToReturn)
-    {
-        argTileToReturn.StartCoroutine(ReturnTileCo(argTileToReturn));
-    }
-
-    /// <summary>
-    /// Returns a tile from it's current position to the tray.
-    /// </summary>
-    /// <param name="argTileToReturn">The tile to return to the tray.</param>
     /// <returns>Returns the enumerator use to run the coroutine.</returns>
     private IEnumerator ReturnTileCo(WordTile argTileToReturn)
     {
@@ -208,4 +148,72 @@ public class WordTileTray : MonoBehaviour
         tileParentTransform.localPosition = originalPos;
         argTileToReturn.interactable = true;
     }
+    #endregion PrivateMethods
+
+    #region PublicMethods
+    /// <summary>
+    /// Saves the starting positions of the tiles and hides them
+    /// </summary>
+    public void Start()
+    {
+        for (int i = 0; i < m_wordTiles.Count; ++i)
+        {
+            m_wordTilesStartingPos[i] = m_wordTiles[i].GetParent().localPosition;
+        }
+
+        Reset();
+    }
+
+    /// <summary>
+    /// Resets the position of the tiles and hides them.
+    /// </summary>
+    public void Reset()
+    {
+        for (int i = 0; i < m_wordTiles.Count; ++i)
+        {
+            //Set back to the initial values
+            m_wordTiles[i].gameObject.SetActive(false);
+            m_wordTiles[i].interactable = false;
+
+            m_wordTiles[i].SetGrandParent(this.transform, i);
+            m_wordTiles[i].GetParent().localPosition = m_wordTilesStartingPos[i];
+
+            m_wordTiles[i].SetOnDetachedCallback(null);
+
+            //Stop any movement coroutines
+            m_wordTiles[i].StopAllCoroutines();
+        }
+    }
+
+    /// <summary>
+    /// Checks if the tray tiles are being shuffled.
+    /// </summary>
+    /// <returns>Returns true if the tiles are being shuffled.</returns>
+    public bool IsShuffling()
+    {
+        return m_isShuffling;
+    }
+
+    /// <summary>
+    /// Shuffles in the new tiles and assigns a new letter to them.
+    /// </summary>
+    /// <param name="argOnShuffleComplete">Callback to call when the shuffle has finished animating.</param>
+    public void ShuffleInNewTiles(System.Action argOnShuffleComplete)
+    {
+        if (m_isShuffling == false)
+        {
+            m_isShuffling = true;
+            StartCoroutine(ShuffleInNewTilesCo(argOnShuffleComplete));
+        }
+    }
+
+    /// <summary>
+    /// Returns a tile from it's current position to the tray.
+    /// </summary>
+    /// <param name="argTileToReturn">The tile to return to the tray.</param>
+    public void ReturnTile(WordTile argTileToReturn)
+    {
+        argTileToReturn.StartCoroutine(ReturnTileCo(argTileToReturn));
+    }
+    #endregion PublicMethods
 }

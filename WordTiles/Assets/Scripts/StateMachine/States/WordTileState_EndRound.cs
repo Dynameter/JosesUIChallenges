@@ -8,6 +8,18 @@ public sealed class WordTileState_EndRound : State
     /// </summary>
     public override void Enter()
     {
+        //Pop the tiles
+        WordTilesMainMenu mainMenu = WordTilesGameManager.Instance.GetMainMenu();
+        mainMenu.EnableButtons(false);
+        mainMenu.GetWordTileTray().DisableTiles();
+        mainMenu.GetWordTileSlotGroup().PopTiles(OnTilesPopped);
+    }
+
+    /// <summary>
+    /// Callback called when the tiles finish popping
+    /// </summary>
+    private void OnTilesPopped()
+    {
         //If the round that just ended was the last round, then end the game.
         if (WordTilesGameManager.Instance.IsOnLastRound() == true)
         {

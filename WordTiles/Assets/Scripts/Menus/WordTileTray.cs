@@ -180,6 +180,7 @@ public class WordTileTray : MonoBehaviour
             //Move the tile off-screen
             RectTransform tileTransform = m_wordTiles[i].GetRectTransform();
             tileTransform.localPosition = new Vector3(tileTransform.localPosition.x, TILE_STARTING_Y, tileTransform.localPosition.z);
+            tileTransform.localScale = Vector3.one;
 
             //Play the shuffle sound
             AudioManager.Instance.PlaySound(ShuffleSound);
@@ -294,6 +295,17 @@ public class WordTileTray : MonoBehaviour
     public void ReturnTile(WordTile argTileToReturn)
     {
         argTileToReturn.StartCoroutine(ReturnTileCo(argTileToReturn));
+    }
+
+    /// <summary>
+    /// Disable all of the tiles from being interactable.
+    /// </summary>
+    public void DisableTiles()
+    {
+        for (int i = 0; i < m_wordTiles.Count; ++i)
+        {
+            m_wordTiles[i].interactable = false;
+        }
     }
     #endregion PublicMethods
 }

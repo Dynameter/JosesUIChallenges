@@ -3,6 +3,44 @@ using System.Collections;
 
 public sealed class WordTileSlotGroup : MonoBehaviour
 {
+    #region StaticMembers
+    /// <summary>
+    /// Method signature for a callback to call when all of the word trays have finished popping.
+    /// </summary>
+    public delegate void OnWordTilesPopped();
+
+    /// <summary>
+    /// The target scale when "popping" a tile.
+    /// </summary>
+    private static readonly Vector3 POPPED_TILE_SCALE = new Vector3(1.2f, 1.2f, 1f);
+
+    /// <summary>
+    /// Path to the audio clip for the popping sound.
+    /// </summary>
+    private const string PATH_TO_POPPING_SOUND = "Sounds/bubble";
+
+    /// <summary>
+    /// Audio clip for the popping sound.
+    /// </summary>
+    private AudioClip _poppingSound;
+
+    /// <summary>
+    /// Audio clip for the popping sound.
+    /// </summary>
+    private AudioClip PoppingSound
+    {
+        get
+        {
+            if (_poppingSound == null)
+            {
+                _poppingSound = Resources.Load<AudioClip>(PATH_TO_POPPING_SOUND);
+            }
+
+            return _poppingSound;
+        }
+    }
+    #endregion
+
     #region PrivateMembers
     /// <summary>
     /// Slots that belong to this group.
@@ -10,6 +48,49 @@ public sealed class WordTileSlotGroup : MonoBehaviour
     [SerializeField]
     private WordTileSlot[] m_slots = new WordTileSlot[WordTilesGameManager.NUMBER_OF_PLAYABLE_TILES];
     #endregion PrivateMembers
+
+    #region PrivateMethods
+    /// <summary>
+    /// "Pops" all tiles one by one.
+    /// </summary>
+    /// <param name="argOnPopped">The callback to call when the tiles have finished popping.</param>
+    /// <returns>Returns the enumerator to </returns>
+    private IEnumerator PopTilesCo(OnWordTilesPopped argOnPopped)
+    {
+        float lerpDuration = (PoppingSound.length / 1.5f);
+        for (int i = 0; i < m_slots.Length; ++i)
+        {
+            WordTile tile = m_slots[i].GetAttachedWordTile();
+            if (tile != null)
+            {
+                //Play the popping sound
+                AudioManager.Instance.PlaySound(PoppingSound);
+
+                float currDuration = 0f;
+                while (currDuration < lerpDuration)
+                {
+                    currDuration += Time.deltaTime;
+                    tile.GetRectTransform().localScale = Vector3.Lerp(Vector3.one, POPPED_TILE_SCALE, (currDuration / lerpDuration));
+
+                    yield return null;
+                }
+
+                //Hide the tile
+                tile.gameObject.SetActive(false);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        //If there is a callback, call it.
+        if (argOnPopped != null)
+        {
+            argOnPopped();
+        }
+    }
+    #endregion PrivateMethods
 
     #region PublicMethods
     /// <summary>
@@ -84,6 +165,15 @@ public sealed class WordTileSlotGroup : MonoBehaviour
         }
 
         return sb.ToString().ToLower();
+    }
+
+    /// <summary>
+    /// Pop all tiles that are on the slots.
+    /// </summary>
+    /// <param name="argOnPopped">The callback to call when all the tiles are popped.</param>
+    public void PopTiles(OnWordTilesPopped argOnPopped)
+    {
+        StartCoroutine(PopTilesCo(argOnPopped));
     }
     #endregion PublicMethods
 }
